@@ -30,6 +30,7 @@ namespace WebApi
             services.AddDbContext<CustomerDbContext>(opts => opts.UseMySql(Configuration.GetConnectionString("CustomerDBMySql"), ServerVersion.AutoDetect(Configuration.GetConnectionString("CustomerDBMySql")))
             .EnableSensitiveDataLogging() // <-- These two calls are optional but help
             .EnableDetailedErrors());
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
