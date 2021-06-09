@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using webapi;
 using webapi.Models;
+using NServiceBus;
 
 namespace WebApi
 {
@@ -40,6 +41,8 @@ namespace WebApi
 
             services.AddSingleton<IntegrationEventSenderService>();
             services.AddHostedService <IntegrationEventSenderService>();
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

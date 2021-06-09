@@ -64,6 +64,8 @@ namespace webapi.Controllers
                             age = customer.Age
                         });
 
+
+
                         _context.IntegrationEventOutbox.Add(
                         new IntegrationEvent()
                         {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using NServiceBus;
 
 namespace WebApi
 {
@@ -21,6 +21,12 @@ namespace WebApi
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                }).UseNServiceBus(context =>
+                {
+                    var endpointConfiguration = new EndpointConfiguration("CustomerService");
+                    endpointConfiguration.SendOnly();
+                    endpointConfiguration.UseTransport<LearningTransport>();
+                    return endpointConfiguration;
                 });
     }
 }
