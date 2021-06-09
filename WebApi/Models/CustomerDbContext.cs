@@ -32,7 +32,6 @@ namespace webapi.Models
         }
 
         public DbSet<Customer> Customers {get; set;}
-
-
+        public DbSet<IntegrationEvent> IntegrationEventOutbox { get; set; }
     };
 }

@@ -4,8 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using webapi.Models;
-using NServiceBus;
-
+using Newtonsoft.Json;
 
 
 namespace webapi.Controllers
@@ -49,9 +48,37 @@ namespace webapi.Controllers
             {
                 return BadRequest("Customer is null.");
             }
-            
-            _context.Add(customer);
-            _context.SaveChanges();
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                    {
+                        _context.Add(customer);
+                        _context.SaveChanges();
+
+                        var integrationEventData = JsonConvert.SerializeObject(new
+                        {
+                            id = customer.Id,
+                            firstName = customer.FirstName,
+                            lastName = customer.LastName,
+                            age = customer.Age
+                        });
+
+                        _context.IntegrationEventOutbox.Add(
+                        new IntegrationEvent()
+                        {
+                            Event = "user.create",
+                            Data = integrationEventData
+                        });
+
+                        _context.SaveChanges();
+                        transaction.Commit();
+                    }
+                catch(Exception)  
+                {
+                    transaction.Rollback();
+                }
+            }
 
             return CreatedAtRoute(
                   "Get", 
@@ -59,7 +86,7 @@ namespace webapi.Controllers
                   customer);
         }
 
-        // DELETE: api/Customer/5
+        // DELETE: api/Customers/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -68,8 +95,34 @@ namespace webapi.Controllers
             {
                 return NotFound("The Customer record couldn't be found.");
             }
-            _context.Customers.Remove(customer);
-            _context.SaveChanges();
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    _context.Remove(customer);
+                    _context.SaveChanges();
+
+                    var integrationEventData = JsonConvert.SerializeObject(new
+                    {
+                        id = customer.Id,
+                    });
+
+                    _context.IntegrationEventOutbox.Add(
+                    new IntegrationEvent()
+                    {
+                        Event = "user.delete",
+                        Data = integrationEventData
+                    });
+
+                    _context.SaveChanges();
+                    transaction.Commit();             
+                }
+                catch(Exception)
+                {
+                    transaction.Rollback();
+                }
+            }
+        
             return NoContent();
         }
     };
