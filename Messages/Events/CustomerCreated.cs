@@ -1,7 +1,7 @@
 using System;
 using NServiceBus;
 
-namespace webapi.Events
+namespace Messages
 {
     public class CustomerCreated : IMessage
     {

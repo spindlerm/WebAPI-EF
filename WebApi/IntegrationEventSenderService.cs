@@ -7,9 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using webapi.Models;
-using webapi.Events;
 using Newtonsoft.Json;
 using NServiceBus;
+using Messages;
 
 namespace webapi
 {
