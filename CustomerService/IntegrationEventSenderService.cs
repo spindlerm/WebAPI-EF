@@ -2,7 +2,6 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -49,14 +48,6 @@ namespace webapi
                         var events = dbContext.IntegrationEventOutbox.OrderBy(o => o.ID).ToList();
                         foreach (var e in events)
                         {
-                           
-                           
-
-                          
-                            //{
-                              //  Age = integEvntData
-                           // };
-
                            switch(e.Event)
                            {
                                 case "user.create":
