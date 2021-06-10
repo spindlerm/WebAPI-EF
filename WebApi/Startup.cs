@@ -29,6 +29,7 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Console.WriteLine(Configuration.GetConnectionString("CustomerDBMySql"));
             services.AddDbContext<CustomerDbContext>(opts => opts.UseMySql(Configuration.GetConnectionString("CustomerDBMySql"), ServerVersion.AutoDetect(Configuration.GetConnectionString("CustomerDBMySql")))
             .EnableSensitiveDataLogging() // <-- These two calls are optional but help
             .EnableDetailedErrors());

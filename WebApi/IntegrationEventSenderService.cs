@@ -49,21 +49,32 @@ namespace webapi
                         var events = dbContext.IntegrationEventOutbox.OrderBy(o => o.ID).ToList();
                         foreach (var e in events)
                         {
-                           var integEvntData = JsonConvert.DeserializeObject(e.Data);
+                           
                            
 
-                            var customerCreated = new CustomerCreated();
+                          
                             //{
                               //  Age = integEvntData
                            // };
-                            await _messageSession.Send("Server", customerCreated).ConfigureAwait(false);
 
-                            //var body = Encoding.UTF8.GetBytes(e.Data);
-                            //channel.BasicPublish(exchange: "user",
-                            //                                 routingKey: e.Event,
-                            //                                 basicProperties: null,
-                            //                                 body: body);
-                            //Console.WriteLine("Published: " + e.Event + " " + e.Data);
+                           switch(e.Event)
+                           {
+                                case "user.create":
+                                {
+                                    CustomerCreated integEvntData = JsonConvert.DeserializeObject<CustomerCreated>(e.Data);
+                                    await _messageSession.Send("Server", integEvntData).ConfigureAwait(false);
+                                    break;
+                                }
+                                case "user.delete":
+                                {
+                                    CustomerDeleted integEvntData = JsonConvert.DeserializeObject<CustomerDeleted>(e.Data);
+                                    await _messageSession.Send("Server", integEvntData).ConfigureAwait(false);
+                                    break;
+                                }
+                                default:
+                                        Console.WriteLine("Default case");
+                                        break;
+                                }
 
                              string Message = $"Outbox Integration event published  {DateTime.UtcNow.ToLongTimeString()} {e.Event} {e.Data}";
                             _logger.LogInformation(Message);

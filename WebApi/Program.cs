@@ -18,15 +18,23 @@ namespace WebApi
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseNServiceBus(context =>
+                {
+                    var config = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json", optional: false)
+                    .Build();
+                    var endpointConfiguration = new EndpointConfiguration("CustomerService");
+                    endpointConfiguration.SendOnly();
+                    endpointConfiguration.EnableInstallers();
+                    var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+                    transport.UseConventionalRoutingTopology();
+                    transport.DisableRemoteCertificateValidation();
+                    transport.ConnectionString(config.GetConnectionString("RabbitMQ"));
+                    return endpointConfiguration;
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                }).UseNServiceBus(context =>
-                {
-                    var endpointConfiguration = new EndpointConfiguration("CustomerService");
-                    endpointConfiguration.SendOnly();
-                    endpointConfiguration.UseTransport<LearningTransport>();
-                    return endpointConfiguration;
                 });
     }
 }
