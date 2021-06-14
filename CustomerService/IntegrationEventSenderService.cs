@@ -53,13 +53,13 @@ namespace webapi
                                 case "user.create":
                                 {
                                     CustomerCreated integEvntData = JsonConvert.DeserializeObject<CustomerCreated>(e.Data);
-                                    await _messageSession.Send("Server", integEvntData).ConfigureAwait(false);
+                                    await _messageSession.Publish(integEvntData).ConfigureAwait(false);
                                     break;
                                 }
                                 case "user.delete":
                                 {
                                     CustomerDeleted integEvntData = JsonConvert.DeserializeObject<CustomerDeleted>(e.Data);
-                                    await _messageSession.Send("Server", integEvntData).ConfigureAwait(false);
+                                    await _messageSession.Publish(integEvntData).ConfigureAwait(false);
                                     break;
                                 }
                                 default:

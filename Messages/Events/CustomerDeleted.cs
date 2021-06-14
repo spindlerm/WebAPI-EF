@@ -3,7 +3,7 @@ using NServiceBus;
 
 namespace Messages
 {
-    public class CustomerDeleted : IMessage
+    public class CustomerDeleted : IEvent 
     {
         public int Id { get; set; }
     };
