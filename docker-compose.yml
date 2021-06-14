@@ -2,20 +2,55 @@ version: "3.3"
 services:
   mysql:
     image: "mysql/mysql-server:5.6"
-    container_name: mysql_test
+    networks:
+      - mynetwork
+    container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports:
       - "3306:3306"
       - "33060:33060"
+    expose:
+      - 3306
+      - 33060
+
     environment:
       - MYSQL_ROOT_HOST=%
       - MYSQL_ROOT_PASSWORD=W3lcome
   rabbit:
     image: "rabbitmq:3-management"
+    networks:
+      - mynetwork
     ports:
       - "15672:15672"
       - "5672:5672"
+    expose:
+      - 5672
+      - 15672
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=W3lcome
+  CustomerService:
+    image: "customerservice"
+    restart: always
+    networks:
+      - mynetwork
+    ports:
+      - "5000:80"
+    depends_on:
+      - rabbit
+      - mysql
+    environment:
+      - ConnectionStrings__CustomerDBMySql=server=mysql;database=Customers;user=root;password=W3lcome;
+      - ConnectionStrings__RabbitMQ=host=rabbit;username=guest;password=W3lcome
+  NotificationService:
+    image: "notificationservice"
+    restart: always
+    networks:
+      - mynetwork
+    depends_on:
+      - rabbit
+    environment:
+        - ConnectionStrings__RabbitMQ=host=rabbit;username=guest;password=W3lcome
+networks:
+  mynetwork: {}
