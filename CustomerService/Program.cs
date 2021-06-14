@@ -22,6 +22,7 @@ namespace WebApi
                 {
                     var config = new ConfigurationBuilder()
                     .AddJsonFile("appsettings.json", optional: false)
+                    .AddEnvironmentVariables()
                     .Build();
                     var endpointConfiguration = new EndpointConfiguration("CustomerService");
                     endpointConfiguration.SendOnly();
