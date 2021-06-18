@@ -19,10 +19,8 @@ namespace NotificationService.Handlers
         
         public async Task Handle(CustomerCreated message, IMessageHandlerContext context)
         {
-        
-            CustomerCreated x = message;
-            Console.WriteLine("sdfsff");
-           //_logger.LogInformation($"Processed Message: {message.Id} {message.FirstName} {message.LastName} {message.Age}");
+           _logger.LogInformation($"Processed Message: {message.Id} {message.FirstName} {message.LastName} {message.Age}");
+           await Task.CompletedTask;
         }
     }
 } 

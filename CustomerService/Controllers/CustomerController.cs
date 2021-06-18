@@ -19,11 +19,15 @@ namespace webapi.Controllers
         public CustomerController(CustomerDbContext context,  ILogger<CustomerController> logger)
         {
             _context = context;
+            _logger = logger;
+
         }
 
         [HttpGet]
         public IActionResult Get()
         {
+             _logger.LogInformation($"Get ALL customers request");
+
             IEnumerable<Customer> customers = _context.Customers.ToList();
             return Ok(customers);
         }
@@ -32,6 +36,8 @@ namespace webapi.Controllers
         [HttpGet("{id}", Name = "Get")]
         public IActionResult Get(int id)
         {
+            _logger.LogInformation($"Get customer: {id} request");
+
             Customer customer = _context.Customers.Find(id);
             if (customer == null)
             {
@@ -44,6 +50,8 @@ namespace webapi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Customer customer)
         {
+            _logger.LogInformation($"Posting new customer request");
+
             if (customer == null)
             {
                 return BadRequest("Customer is null.");
@@ -92,6 +100,8 @@ namespace webapi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
+             _logger.LogInformation($"Delete customer: {id} request");
+
             Customer customer = _context.Customers.Find(id);
             if (customer == null)
             {

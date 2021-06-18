@@ -50,11 +50,6 @@ namespace NotificationService
 
                     endpointConfiguration.DefineCriticalErrorAction(OnCriticalError);
 
-                    Console.WriteLine("****!!!!****");
-                    Console.WriteLine(configuration.GetConnectionString("RabbitMQ"));
-
-                    // string getEnv = Environment.GetEnvironmentVariable("ConnectionStrings__RabbitMQ");
-                    //  Console.WriteLine($"{getEnv}");
                     // Configuration transport
                     var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
                     transport.UseConventionalRoutingTopology();
@@ -62,13 +57,7 @@ namespace NotificationService
                     
                    
                     transport.ConnectionString(configuration.GetConnectionString("RabbitMQ"));
-           
-                    Console.WriteLine("****!!!!****");
-                     Console.WriteLine(configuration.GetConnectionString("RabbitMQ"));
-
-                     
-                    
-                   
+        
 
                     // TODO: remove this condition after choosing a transport, persistence and deployment method suitable for production
                     if (Environment.UserInteractive && Debugger.IsAttached && false)
