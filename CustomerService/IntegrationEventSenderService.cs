@@ -42,39 +42,41 @@ namespace webapi
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
+                    using (var scope = _scopeFactory.CreateScope())
                     {
-                        using var scope = _scopeFactory.CreateScope();
-                        using var dbContext = scope.ServiceProvider.GetRequiredService<CustomerDbContext>();
-                        var events = dbContext.IntegrationEventOutbox.OrderBy(o => o.ID).ToList();
-                        foreach (var e in events)
+                        using (var dbContext = scope.ServiceProvider.GetRequiredService<CustomerDbContext>())
                         {
-                           switch(e.Event)
-                           {
-                                case "user.create":
+                            var events = dbContext.IntegrationEventOutbox.OrderBy(o => o.ID).ToList();
+                            foreach (var e in events)
+                            {
+                                switch(e.Event)
                                 {
-                                    CustomerCreated integEvntData = JsonConvert.DeserializeObject<CustomerCreated>(e.Data);
-                                    await _messageSession.Publish(integEvntData).ConfigureAwait(false);
-                                    break;
+                                        case "user.create":
+                                        {
+                                            CustomerCreated integEvntData = JsonConvert.DeserializeObject<CustomerCreated>(e.Data);
+                                            await _messageSession.Publish(integEvntData).ConfigureAwait(false);
+                                            break;
+                                        }
+                                        case "user.delete":
+                                        {
+                                            CustomerDeleted integEvntData = JsonConvert.DeserializeObject<CustomerDeleted>(e.Data);
+                                            await _messageSession.Publish(integEvntData).ConfigureAwait(false);
+                                            break;
+                                        }
+                                        default:
+                                                Console.WriteLine("Default case");
+                                                break;
                                 }
-                                case "user.delete":
-                                {
-                                    CustomerDeleted integEvntData = JsonConvert.DeserializeObject<CustomerDeleted>(e.Data);
-                                    await _messageSession.Publish(integEvntData).ConfigureAwait(false);
-                                    break;
-                                }
-                                default:
-                                        Console.WriteLine("Default case");
-                                        break;
-                                }
-
-                             string Message = $"Outbox Integration event published  {DateTime.UtcNow.ToLongTimeString()} {e.Event} {e.Data}";
-                            _logger.LogInformation(Message);
-                            dbContext.Remove(e);
-                            dbContext.SaveChanges();
+                                string Message = $"Outbox Integration event published  {DateTime.UtcNow.ToLongTimeString()} {e.Event} {e.Data}";
+                                _logger.LogInformation(Message);
+                                dbContext.Remove(e);
+                                dbContext.SaveChanges();
+                            }   
                         }
                     }
-                    await Task.Delay(1000, stoppingToken);
-                }     
+                    await Task.Delay(1000, stoppingToken); 
+                }
+                
             }
             catch (Exception e)
             {

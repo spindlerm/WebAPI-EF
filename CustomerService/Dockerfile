@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
-ENV ASPNETCORE_URLS=http://+:5000
+#ENV ASPNETCORE_URLS=http://+:5000
 WORKDIR /source
 COPY  *.sln .
 

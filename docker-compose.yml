@@ -41,6 +41,7 @@ services:
       - rabbit
       - mysql
     environment:
+      - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__CustomerDBMySql=server=mysql;database=Customers;user=root;password=W3lcome;
       - ConnectionStrings__RabbitMQ=host=rabbit;username=guest;password=W3lcome
   NotificationService:
