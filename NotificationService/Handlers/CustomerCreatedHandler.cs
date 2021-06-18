@@ -19,7 +19,7 @@ namespace NotificationService.Handlers
         
         public async Task Handle(CustomerCreated message, IMessageHandlerContext context)
         {
-           _logger.LogInformation($"Processed Message: {message.Id} {message.FirstName} {message.LastName} {message.Age}");
+           _logger.LogInformation($"Processed Message: {message.Id} {message.FirstName} {message.LastName} {message.Age} {message.CommunicationPreference} {message.EmailAddress} {message.MobileNo}");
            await Task.CompletedTask;
         }
     }
